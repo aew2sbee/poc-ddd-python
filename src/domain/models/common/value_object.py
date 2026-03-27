@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, Any
 
 # 保持する値の型を表すジェネリクス（TypeScriptの T に相当）
-T = TypeVar('T')
+T = TypeVar("T")
+
 
 class ValueObject(ABC, Generic[T]):
     """
@@ -10,11 +11,14 @@ class ValueObject(ABC, Generic[T]):
     不変性とバリデーションをサポートします。
     """
 
+    _value: T
+
     def __init__(self, value: T) -> None:
         # 1. 構築時にビジネスルールに基づくバリデーションを実行
         self.validate(value)
         # 2. 外部から直接変更されないよう、慣習的にアンダースコアを付与
-        self._value = value
+        # frozen=True なデータクラスに対応するため、object.__setattr__ を使用します
+        object.__setattr__(self, "_value", value)
 
     @abstractmethod
     def validate(self, value: T) -> None:
@@ -44,7 +48,7 @@ class ValueObject(ABC, Generic[T]):
             return False
 
         # 値の比較（Pythonの == は辞書やリストも深く比較します）
-        return self._value == other._value
+        return bool(self._value == other._value)
 
     def __eq__(self, other: Any) -> bool:
         """

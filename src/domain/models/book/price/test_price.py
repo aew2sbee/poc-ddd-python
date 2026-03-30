@@ -12,8 +12,8 @@ class TestPrice:
         price = Price(amount=amount)
 
         # Assert
-        assert price.value_amount == amount
-        assert price.value_currency == "JPY"
+        assert price.amount == amount
+        assert price.currency == "JPY"
 
     def test_can_create_with_max_amount(self) -> None:
         """最大金額(1000000円)でPriceが作成できる"""
@@ -24,7 +24,7 @@ class TestPrice:
         price = Price(amount=amount)
 
         # Assert
-        assert price.value_amount == amount
+        assert price.amount == amount
 
     def test_error_when_less_than_min_amount(self) -> None:
         """最小金額未満でPriceを生成するとエラーを投げる"""

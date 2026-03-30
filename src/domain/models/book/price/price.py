@@ -1,41 +1,35 @@
 from dataclasses import dataclass
-from typing import Literal
+from domain.models.common.value_object import ValueObject
 
 
-@dataclass(frozen=True)
-class Price:
+@dataclass(frozen=True, init=False)
+class Price(ValueObject[int]):
     """
     価格を扱う値オブジェクト
     """
 
-    amount: int
-    currency: Literal["JPY"] = "JPY"
+    _value: int
 
-    # 定数の定義
+    # --- クラス内のみで使用する定数 ---
+    _CURRENCY = "JPY"
     _MAX_AMOUNT = 1000000
     _MIN_AMOUNT = 1
     _INVALID_MIN_AMOUNT = f"価格は{_MIN_AMOUNT}円以上である必要があります。"
     _INVALID_MAX_AMOUNT = f"価格は{_MAX_AMOUNT}円以下である必要があります。"
-    _INVALID_CURRENCY = "現在は日本円のみを扱います。"
 
-    def __post_init__(self) -> None:
-        """
-        インスタンス生成時にバリデーションを実行します
-        """
-        self._validate()
+    def __init__(self, amount: int):
+        super().__init__(amount)
 
-    def _validate(self) -> None:
-        if self.currency != "JPY":
-            raise ValueError(self._INVALID_CURRENCY)
-        if self.amount < self._MIN_AMOUNT:
+    def validate(self, value: int) -> None:
+        if value < self._MIN_AMOUNT:
             raise ValueError(self._INVALID_MIN_AMOUNT)
-        if self.amount > self._MAX_AMOUNT:
+        if value > self._MAX_AMOUNT:
             raise ValueError(self._INVALID_MAX_AMOUNT)
 
     @property
-    def value_amount(self) -> int:
-        return self.amount
+    def amount(self) -> int:
+        return self._value
 
     @property
-    def value_currency(self) -> str:
-        return self.currency
+    def currency(self) -> str:
+        return self._CURRENCY

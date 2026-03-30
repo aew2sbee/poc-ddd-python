@@ -26,21 +26,39 @@ class TestBookId:
         assert book_id.value == isbn
 
     def test_error_when_less_than_min_length(self) -> None:
-        """最小長未満の値でBookIdを生成するとエラーを投げる"""
+        """ISBNが最小長未満の値でBookIdを生成するとエラーを投げる"""
         # Arrange
         isbn = "123456789"
 
         # Act & Assert
-        with pytest.raises(ValueError, match=BookId._INVALID_MIN_LENGTH):
+        with pytest.raises(ValueError, match=BookId._INVALID_LENGTH):
+            BookId(isbn)
+
+    def test_error_when_invalid_length_11(self) -> None:
+        """ISBNが11文字の無効な長さの値でBookIdを生成するとエラーを投げる"""
+        # Arrange
+        isbn = "12345678901"
+
+        # Act & Assert
+        with pytest.raises(ValueError, match=BookId._INVALID_LENGTH):
+            BookId(isbn)
+
+    def test_error_when_invalid_length_12(self) -> None:
+        """ISBNが12文字の無効な長さの値でBookIdを生成するとエラーを投げる"""
+        # Arrange
+        isbn = "123456789012"
+
+        # Act & Assert
+        with pytest.raises(ValueError, match=BookId._INVALID_LENGTH):
             BookId(isbn)
 
     def test_error_when_exceeds_max_length(self) -> None:
-        """最大長を超える値でBookIdを生成するとエラーを投げる"""
+        """ISBNが最大長を超える値でBookIdを生成するとエラーを投げる"""
         # Arrange
         isbn = "12345678901234"
 
         # Act & Assert
-        with pytest.raises(ValueError, match=BookId._INVALID_MAX_LENGTH):
+        with pytest.raises(ValueError, match=BookId._INVALID_LENGTH):
             BookId(isbn)
 
     def test_equality_with_same_value(self) -> None:

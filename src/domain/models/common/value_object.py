@@ -56,6 +56,13 @@ class ValueObject(ABC, Generic[T]):
         """
         return self.equals(other)
 
+    def __hash__(self) -> int:
+        """
+        __eq__ と整合性のあるハッシュ値を返します。
+        set や dict のキーとして使用できるようにします。
+        """
+        return hash(self._value)
+
     def __repr__(self) -> str:
         """デバッグ時に内容を見やすくするための特殊メソッドです。"""
         return f"{self.__class__.__name__}({self._value})"

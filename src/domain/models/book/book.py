@@ -9,10 +9,10 @@ from domain.models.book.author.author import Author
 class Book:
     """
     書籍エンティティ
+    外部から直接 Book() を呼び出さず、create() または reconstruct() を使用してください。
     """
 
     def __init__(self, identity: BookIdentity, price: Price):
-        # 内部変数として保持
         self._identity = identity
         self._price = price
 
@@ -52,7 +52,6 @@ class Book:
         return self._price
 
     # --- Behavior ---
-    def change_price(self, new_price: Price) -> None:
+    def change_price(self, new_price: Price) -> "Book":
         """価格を変更します"""
-        # ここでバリデーションなどはPriceクラス側で行われている前提です
-        self._price = new_price
+        return Book(self._identity, new_price)

@@ -6,44 +6,42 @@ class TestPrice:
     def test_can_create_with_min_amount(self) -> None:
         """最小金額(1円)でPriceが作成できる"""
         # Arrange
-        amount = 1
+        amount = Price._MIN_AMOUNT
 
         # Act
         price = Price(amount=amount)
 
         # Assert
-        assert price.value_amount == amount
-        assert price.value_currency == "JPY"
+        assert price.amount == amount
+        assert price.currency == "JPY"
 
     def test_can_create_with_max_amount(self) -> None:
         """最大金額(1000000円)でPriceが作成できる"""
         # Arrange
-        amount = 1000000
+        amount = Price._MAX_AMOUNT
 
         # Act
         price = Price(amount=amount)
 
         # Assert
-        assert price.value_amount == amount
+        assert price.amount == amount
 
     def test_error_when_less_than_min_amount(self) -> None:
         """最小金額未満でPriceを生成するとエラーを投げる"""
         # Arrange
-        amount = 0
+        amount = Price._MIN_AMOUNT - 1
 
         # Act & Assert
-        with pytest.raises(ValueError, match="価格は1円以上である必要があります。"):
+        with pytest.raises(ValueError, match=Price._INVALID_MIN_AMOUNT):
             Price(amount=amount)
 
     def test_error_when_exceeds_max_amount(self) -> None:
         """最大金額を超えるとPriceを生成するとエラーを投げる"""
         # Arrange
-        amount = 1000001
+        amount = Price._MAX_AMOUNT + 1
 
         # Act & Assert
-        with pytest.raises(
-            ValueError, match="価格は1000000円以下である必要があります。"
-        ):
+        with pytest.raises(ValueError, match=Price._INVALID_MAX_AMOUNT):
             Price(amount=amount)
 
     def test_equality_with_same_amount(self) -> None:

@@ -7,19 +7,36 @@ class BookId(ValueObject[str]):
     _value: str
     # --- クラス内のみで使用する定数 ---
     _MIN_LENGTH = 10
-    _INVALID_MIN_LENGTH = f"ISBNの文字数が{_MIN_LENGTH}以上である必要があります。"
     _MAX_LENGTH = 13
-    _INVALID_MAX_LENGTH = f"ISBNの文字数が{_MAX_LENGTH}以下である必要があります。"
+    _INVALID_LENGTH = (
+        f"ISBNの文字数が{_MIN_LENGTH}か{_MAX_LENGTH}である必要があります。"
+    )
     _ISBN13_PREFIXES = ("978", "979")
 
-    def __init__(self, id: str):
-        super().__init__(id)
+    def __init__(self, isbn: str):
+        super().__init__(isbn)
 
     def validate(self, value: str) -> None:
-        if len(value) < self._MIN_LENGTH:
-            raise ValueError(self._INVALID_MIN_LENGTH)
-        if len(value) > self._MAX_LENGTH:
-            raise ValueError(self._INVALID_MAX_LENGTH)
+        if not (len(value) == self._MIN_LENGTH or len(value) == self._MAX_LENGTH):
+            raise ValueError(self._INVALID_LENGTH)
+
+    def to_isbn(self) -> str:
+        """ISBNフォーマットの文字列に変換します。"""
+        # ISBNが10桁の場合の、'ISBN' フォーマットに変換します。
+        if self._is_valid_isbn10(self._value):
+            group_identifier = self._value[0:1]  # 国コードなど（1桁）
+            publisher_code = self._value[1:3]  # 出版社コード（2桁）
+            book_code = self._value[3:9]  # 書籍コード（6桁）
+            checksum = self._value[9:]  # チェックディジット（1桁）
+            return f"ISBN{group_identifier}-{publisher_code}-{book_code}-{checksum}"
+        # ISBNが13桁の場合の、'ISBN' フォーマットに変換します。
+        else:
+            isbn_prefix = self._value[0:3]  # プレフィックス（3桁）
+            group_identifier = self._value[3:4]  # 国コードなど（1桁）
+            publisher_code = self._value[4:6]  # 出版社コード（2桁）
+            book_code = self._value[6:12]  # 書籍コード（6桁）
+            checksum = self._value[12:]  # チェックディジット（1桁）
+            return f"ISBN{isbn_prefix}-{group_identifier}-{publisher_code}-{book_code}-{checksum}"
 
     @staticmethod
     def _is_valid_isbn10(isbn10: str) -> bool:

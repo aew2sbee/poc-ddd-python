@@ -73,13 +73,14 @@ class TestBook:
         assert result is False
 
     def test_change_price(self) -> None:
-        """change_priceで価格を変更できる"""
+        """change_priceで価格を変更した新しいBookが返される"""
         # Arrange
         book = Book.create(self._create_identity(), Price(amount=1500))
         new_price = Price(amount=2000)
 
         # Act
-        book.change_price(new_price)
+        updated_book = book.change_price(new_price)
 
         # Assert
-        assert book.price == new_price
+        assert updated_book.price == new_price
+        assert book.price == Price(amount=1500)  # 元のBookは変更されない

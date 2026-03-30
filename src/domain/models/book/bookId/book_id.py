@@ -21,6 +21,24 @@ class BookId(ValueObject[str]):
         if len(value) > self._MAX_LENGTH:
             raise ValueError(self._INVALID_MAX_LENGTH)
 
+    def to_isbn(self) -> str:
+        """ISBNフォーマットの文字列に変換します。"""
+        # ISBNが10桁の場合の、'ISBN' フォーマットに変換します。
+        if self._is_valid_isbn10(self._value):
+            group_identifier = self._value[0:1]  # 国コードなど（1桁）
+            publisher_code = self._value[1:3]  # 出版社コード（2桁）
+            book_code = self._value[3:9]  # 書籍コード（6桁）
+            checksum = self._value[9:]  # チェックディジット（1桁）
+            return f"ISBN{group_identifier}-{publisher_code}-{book_code}-{checksum}"
+        # ISBNが13桁の場合の、'ISBN' フォーマットに変換します。
+        else:
+            isbn_prefix = self._value[0:3]  # プレフィックス（3桁）
+            group_identifier = self._value[3:4]  # 国コードなど（1桁）
+            publisher_code = self._value[4:6]  # 出版社コード（2桁）
+            book_code = self._value[6:12]  # 書籍コード（6桁）
+            checksum = self._value[12:]  # チェックディジット（1桁）
+            return f"ISBN{isbn_prefix}-{group_identifier}-{publisher_code}-{book_code}-{checksum}"
+
     @staticmethod
     def _is_valid_isbn10(isbn10: str) -> bool:
         """

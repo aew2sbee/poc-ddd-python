@@ -27,12 +27,10 @@ class Price:
     def _validate(self) -> None:
         if self.currency != "JPY":
             raise ValueError(self._INVALID_CURRENCY)
-
-        if not (self._MIN_AMOUNT <= self.amount <= self._MAX_AMOUNT):
-            if self.amount < self._MIN_AMOUNT:
-                raise ValueError(self._INVALID_MIN_AMOUNT)
-            if self.amount > self._MAX_AMOUNT:
-                raise ValueError(self._INVALID_MAX_AMOUNT)
+        if self.amount < self._MIN_AMOUNT:
+            raise ValueError(self._INVALID_MIN_AMOUNT)
+        if self.amount > self._MAX_AMOUNT:
+            raise ValueError(self._INVALID_MAX_AMOUNT)
 
     @property
     def value_amount(self) -> int:

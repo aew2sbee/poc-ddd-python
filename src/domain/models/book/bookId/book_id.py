@@ -13,8 +13,8 @@ class BookId(ValueObject[str]):
     )
     _ISBN13_PREFIXES = ("978", "979")
 
-    def __init__(self, id: str):
-        super().__init__(id)
+    def __init__(self, isbn: str):
+        super().__init__(isbn)
 
     def validate(self, value: str) -> None:
         if not (len(value) == self._MIN_LENGTH or len(value) == self._MAX_LENGTH):

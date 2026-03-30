@@ -52,7 +52,6 @@ class Book:
         return self._price
 
     # --- Behavior ---
-    def change_price(self, new_price: Price) -> None:
+    def change_price(self, new_price: Price) -> "Book":
         """価格を変更します"""
-        # ここでバリデーションなどはPriceクラス側で行われている前提です
-        self._price = new_price
+        return Book(self._identity, new_price)

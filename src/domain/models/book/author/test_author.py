@@ -31,9 +31,7 @@ class TestAuthor:
         author_name = ""
 
         # Act & Assert
-        with pytest.raises(
-            ValueError, match="著者名の文字数が1以上である必要があります。"
-        ):
+        with pytest.raises(ValueError, match=Author._INVALID_MIN_LENGTH):
             Author(author_name)
 
     def test_author_raises_error_when_exceeds_max_length(self) -> None:
@@ -42,7 +40,5 @@ class TestAuthor:
         author_name = "A" * 101
 
         # Act & Assert
-        with pytest.raises(
-            ValueError, match="著者名の文字数が100以下である必要があります。"
-        ):
+        with pytest.raises(ValueError, match=Author._INVALID_MAX_LENGTH):
             Author(author_name)

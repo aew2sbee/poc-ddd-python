@@ -1,10 +1,7 @@
-from dataclasses import dataclass
 from domain.models.common.value_object import ValueObject
 
 
-@dataclass(frozen=True, init=False)
 class Title(ValueObject[str]):
-    _value: str
     # --- クラス内のみで使用する定数 ---
     _MIN_LENGTH = 1
     _INVALID_MIN_LENGTH = f"タイトルの文字数が{_MIN_LENGTH}以上である必要があります。"

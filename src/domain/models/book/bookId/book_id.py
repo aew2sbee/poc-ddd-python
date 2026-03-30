@@ -1,10 +1,7 @@
-from dataclasses import dataclass
 from domain.models.common.value_object import ValueObject
 
 
-@dataclass(frozen=True, init=False)
 class BookId(ValueObject[str]):
-    _value: str
     # --- クラス内のみで使用する定数 ---
     _MIN_LENGTH = 10
     _MAX_LENGTH = 13

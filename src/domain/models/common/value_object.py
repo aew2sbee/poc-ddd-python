@@ -9,6 +9,9 @@ class ValueObject(ABC, Generic[T]):
     """
     値オブジェクトの基底クラス。
     不変性とバリデーションをサポートします。
+
+    不変性は本クラスの __setattr__ / __delattr__ で保証しているため、
+    サブクラスで @dataclass(frozen=True) を付ける必要はありません。
     """
 
     _value: T
@@ -16,8 +19,7 @@ class ValueObject(ABC, Generic[T]):
     def __init__(self, value: T) -> None:
         # 1. 構築時にビジネスルールに基づくバリデーションを実行
         self.validate(value)
-        # 2. 外部から直接変更されないよう、慣習的にアンダースコアを付与
-        # frozen=True なデータクラスに対応するため、object.__setattr__ を使用します
+        # 2. object.__setattr__ を直接呼び、下記の __setattr__ をバイパスしてセット
         object.__setattr__(self, "_value", value)
 
     @abstractmethod
@@ -35,26 +37,21 @@ class ValueObject(ABC, Generic[T]):
         """
         return self._value
 
-    def equals(self, other: Any) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """
         他のオブジェクトと同値か比較します。
+        Python では == 演算子がこのメソッドを自動的に呼び出します。
         """
         if not isinstance(other, ValueObject):
             return False
 
         # クラス（型）が一致しているかチェック（名目的型付けの再現）
-        # これにより UserId と ChannelId を間違えて比較しても False になります
+        # これにより BookId と Title を間違えて比較しても False になります
         if type(self) is not type(other):
             return False
 
         # 値の比較（Pythonの == は辞書やリストも深く比較します）
         return bool(self._value == other._value)
-
-    def __eq__(self, other: Any) -> bool:
-        """
-        Pythonの == 演算子で equals メソッドを呼び出せるようにします。
-        """
-        return self.equals(other)
 
     def __hash__(self) -> int:
         """
@@ -66,3 +63,15 @@ class ValueObject(ABC, Generic[T]):
     def __repr__(self) -> str:
         """デバッグ時に内容を見やすくするための特殊メソッドです。"""
         return f"{self.__class__.__name__}({self._value})"
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        """構築後の属性変更を禁止し、不変性を保証します。"""
+        raise AttributeError(
+            f"{self.__class__.__name__} は不変オブジェクトです。属性を変更できません。"
+        )
+
+    def __delattr__(self, name: str) -> None:
+        """属性の削除を禁止し、不変性を保証します。"""
+        raise AttributeError(
+            f"{self.__class__.__name__} は不変オブジェクトです。属性を削除できません。"
+        )

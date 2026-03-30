@@ -9,10 +9,10 @@ from domain.models.book.author.author import Author
 class Book:
     """
     書籍エンティティ
+    外部から直接 Book() を呼び出さず、create() または reconstruct() を使用してください。
     """
 
     def __init__(self, identity: BookIdentity, price: Price):
-        # 内部変数として保持
         self._identity = identity
         self._price = price
 

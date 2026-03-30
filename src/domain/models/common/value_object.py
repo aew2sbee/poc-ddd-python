@@ -10,8 +10,14 @@ class ValueObject(ABC, Generic[T]):
     値オブジェクトの基底クラス。
     不変性とバリデーションをサポートします。
 
-    不変性は本クラスの __setattr__ / __delattr__ で保証しているため、
-    サブクラスで @dataclass(frozen=True) を付ける必要はありません。
+    不変性は本クラスの __setattr__ / __delattr__ で属性の再代入・削除を禁止することで
+    実現しています（浅い不変性）。サブクラスで @dataclass(frozen=True) を付ける必要は
+    ありません。
+
+    Note:
+        T に list や dict などの可変オブジェクトを使用した場合、その内部状態の変更
+        （例: list.append()）までは防げません。T には str, int などの不変型を使用して
+        ください。
     """
 
     _value: T
@@ -41,14 +47,17 @@ class ValueObject(ABC, Generic[T]):
         """
         他のオブジェクトと同値か比較します。
         Python では == 演算子がこのメソッドを自動的に呼び出します。
+
+        比較できない型の場合は NotImplemented を返し、
+        Python に相手側の __eq__ を試す機会を与えます。
         """
         if not isinstance(other, ValueObject):
-            return False
+            return NotImplemented
 
         # クラス（型）が一致しているかチェック（名目的型付けの再現）
         # これにより BookId と Title を間違えて比較しても False になります
         if type(self) is not type(other):
-            return False
+            return NotImplemented
 
         # 値の比較（Pythonの == は辞書やリストも深く比較します）
         return bool(self._value == other._value)

@@ -42,3 +42,30 @@ class TestTitle:
         # Act & Assert
         with pytest.raises(ValueError, match=Title._INVALID_MIN_LENGTH):
             Title(title_str)
+
+    def test_immutable_cannot_reassign_value(self) -> None:
+        """生成後に_valueを再代入するとAttributeErrorになる"""
+        # Arrange
+        title = Title("Python入門")
+
+        # Act & Assert
+        with pytest.raises(AttributeError):
+            title._value = "改ざんされた値"
+
+    def test_immutable_cannot_delete_value(self) -> None:
+        """生成後に_valueを削除するとAttributeErrorになる"""
+        # Arrange
+        title = Title("Python入門")
+
+        # Act & Assert
+        with pytest.raises(AttributeError):
+            del title._value
+
+    def test_immutable_cannot_add_new_attribute(self) -> None:
+        """生成後に新しい属性を追加するとAttributeErrorになる"""
+        # Arrange
+        title = Title("Python入門")
+
+        # Act & Assert
+        with pytest.raises(AttributeError):
+            title.new_attr = "不正な属性"

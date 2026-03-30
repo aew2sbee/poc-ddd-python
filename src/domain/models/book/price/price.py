@@ -1,14 +1,10 @@
-from dataclasses import dataclass
 from domain.models.common.value_object import ValueObject
 
 
-@dataclass(frozen=True, init=False)
 class Price(ValueObject[int]):
     """
     価格を扱う値オブジェクト
     """
-
-    _value: int
 
     # --- クラス内のみで使用する定数 ---
     _CURRENCY = "JPY"

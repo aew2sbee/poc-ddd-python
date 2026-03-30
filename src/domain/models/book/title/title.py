@@ -11,8 +11,8 @@ class Title(ValueObject[str]):
     _MAX_LENGTH = 1000
     _INVALID_MAX_LENGTH = f"タイトルの文字数が{_MAX_LENGTH}以下である必要があります。"
 
-    def __init__(self, id: str):
-        super().__init__(id)
+    def __init__(self, value: str):
+        super().__init__(value)
 
     def validate(self, value: str) -> None:
         if len(value) < self._MIN_LENGTH:
